@@ -1,0 +1,17 @@
+{
+    "folders": [
+        { "name": "__root", "path": "../" },
+        { "path": "../days/01" }
+    ],
+    "settings": {
+        "files.exclude": {
+            "**/.git": true,
+            "**/.svn": true,
+            "**/.hg": true,
+            "**/CVS": true,
+            "**/.DS_Store": true,
+            "**/Thumbs.db": true,
+            "days": true
+        }
+    }
+}
