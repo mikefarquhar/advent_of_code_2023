@@ -1,7 +1,8 @@
 {
     "folders": [
         { "name": "__root", "path": "../" },
-        { "path": "../days/01" }
+        { "path": "../days/01" },
+        { "path": "../days/02" }
     ],
     "settings": {
         "files.exclude": {
