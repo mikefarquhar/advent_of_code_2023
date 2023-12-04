@@ -3,7 +3,8 @@
         { "name": "__root", "path": "../" },
         { "path": "../days/01" },
         { "path": "../days/02" },
-        { "path": "../days/03" }
+        { "path": "../days/03" },
+        { "path": "../days/04" }
     ],
     "settings": {
         "files.exclude": {
