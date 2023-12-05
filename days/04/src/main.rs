@@ -1,7 +1,4 @@
-use std::collections::{HashMap, VecDeque};
-
 struct Card {
-    id: usize,
     winning_numbers: Vec<usize>,
     revealed_numbers: Vec<usize>,
 }
@@ -9,22 +6,14 @@ struct Card {
 fn parse_input(input: &str) -> Vec<Card> {
     input
         .lines()
-        .map(|line| line.trim())
-        .filter(|&line| !line.is_empty())
+        .filter(|&line| !line.trim().is_empty())
         .map(|line| {
-            let (title_str, numbers_str) = line.split_once(":").unwrap();
-
-            let id_str = title_str.split_whitespace().nth(1).unwrap();
-            let id: usize = id_str.parse().unwrap();
-
+            let (_, numbers_str) = line.split_once(":").unwrap();
             let (winning_num_str, revealed_num_str) = numbers_str.split_once("|").unwrap();
-            let winning_numbers = parse_numbers(winning_num_str);
-            let revealed_numbers = parse_numbers(revealed_num_str);
 
             Card {
-                id,
-                winning_numbers,
-                revealed_numbers,
+                winning_numbers: parse_numbers(winning_num_str),
+                revealed_numbers: parse_numbers(revealed_num_str),
             }
         })
         .collect()
@@ -32,55 +21,44 @@ fn parse_input(input: &str) -> Vec<Card> {
 
 fn parse_numbers(numbers_str: &str) -> Vec<usize> {
     numbers_str
-        .trim()
         .split_whitespace()
         .map(|num_str| num_str.parse().unwrap())
         .collect()
 }
 
-fn find_winning_numbers_score(cards: &[Card]) -> usize {
-    cards
+fn get_winning_count(card: &Card) -> usize {
+    card.revealed_numbers
         .iter()
-        .map(|card| {
-            let count = card
-                .revealed_numbers
-                .iter()
-                .filter(|&num| card.winning_numbers.contains(num))
-                .count() as u32;
-
-            if count > 0 {
-                2_usize.pow(count - 1)
-            } else {
-                0
-            }
-        })
-        .sum()
+        .filter(|&num| card.winning_numbers.contains(num))
+        .count()
 }
 
-fn count_cards_scratched(cards: &[Card]) -> u32 {
-    let mut queue = VecDeque::with_capacity(cards.len());
-    queue.extend(cards.iter());
+fn find_winning_numbers_score(cards: &[Card]) -> usize {
+    let mut total = 0;
 
-    let mut cached_results = HashMap::new();
-    let mut visited = cards.len() as u32;
-
-    while let Some(card) = queue.pop_back() {
-        let count = *cached_results.entry(card.id).or_insert_with(|| {
-            card.revealed_numbers
-                .iter()
-                .filter(|&num| card.winning_numbers.contains(num))
-                .count()
-        });
-
-        visited += count as u32;
-
-        for i in 0..count {
-            let next_card = &cards[card.id + i];
-            queue.push_back(next_card);
+    for card in cards {
+        let count = get_winning_count(card) as u32;
+        if count > 0 {
+            total += 2_usize.pow(count - 1);
         }
     }
 
-    visited
+    total
+}
+
+// I knew this was a Dynamic Programming problem, but I'm a bit rusty (hah!)
+fn count_cards_scratched(cards: &[Card]) -> u32 {
+    let mut counts = vec![1; cards.len()];
+
+    for (i, card) in cards.iter().enumerate() {
+        let card_count = counts[i];
+
+        for offset in 1..get_winning_count(card) + 1 {
+            counts[i + offset] += card_count;
+        }
+    }
+
+    counts.iter().sum()
 }
 
 fn main() {
