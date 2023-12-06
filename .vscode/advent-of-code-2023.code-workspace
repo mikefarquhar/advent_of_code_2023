@@ -5,7 +5,8 @@
         { "path": "../days/02" },
         { "path": "../days/03" },
         { "path": "../days/04" },
-        { "path": "../days/05" }
+        { "path": "../days/05" },
+        { "path": "../days/06" }
     ],
     "settings": {
         "files.exclude": {
